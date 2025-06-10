@@ -1,0 +1,194 @@
+package provider
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/zoullx/terraform-provider-unifi/internal/datasource_wlan"
+
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/zoullx/unifi-go/unifi"
+)
+
+var (
+	_ datasource.DataSource = &wlanDataSource{}
+)
+
+func NewWlanDataSource() datasource.DataSource {
+	return &wlanDataSource{}
+}
+
+type wlanDataSource struct {
+	client *unifi.Client
+}
+
+func (d *wlanDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_wlan"
+}
+
+func (d *wlanDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = datasource_wlan.WlanDataSourceSchema(ctx)
+}
+
+func (d *wlanDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	// Add a nil check when handling ProviderData because Terraform
+	// sets that data after it calls the ConfigureProvider RPC.
+	if req.ProviderData == nil {
+		return
+	}
+
+	client, ok := req.ProviderData.(*unifi.Client)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Data Source Configure Type",
+			fmt.Sprintf("Expected *unifi.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+
+		return
+	}
+
+	d.client = client
+}
+
+func (d *wlanDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data datasource_wlan.WlanModel
+
+	// Read Terraform configuration data into the model
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Get WLAN
+	wlan, err := d.client.GetWLAN(ctx, data.Site.ValueString(), data.Id.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Unable to read WLAN",
+			err.Error(),
+		)
+		return
+	}
+
+	resp.Diagnostics.Append(parseWlanDataSourceJson(ctx, *wlan, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Save data into Terraform state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func parseWlanDataSourceJson(ctx context.Context, json unifi.WLAN, model *datasource_wlan.WlanModel) diag.Diagnostics {
+	model.Id = types.StringValue(json.ID)
+	model.SiteId = types.StringValue(json.SiteID)
+
+	apGroupIdList, diags := types.ListValueFrom(ctx, types.StringType, json.ApGroupIDs)
+	if diags.HasError() {
+		return diags
+	}
+	model.ApGroupIds = apGroupIdList
+
+	model.ApGroupMode = types.StringValue(json.ApGroupMode)
+	model.BSupported = types.BoolValue(json.BSupported)
+
+	broadcastFilterList, diags := types.ListValueFrom(ctx, types.StringType, json.BroadcastFilterList)
+	if diags.HasError() {
+		return diags
+	}
+	model.BroadcastFilterList = broadcastFilterList
+
+	model.BssTransition = types.BoolValue(json.BssTransition)
+	model.Dtim6e = types.Int64Value(int64(json.DTIM6E))
+	model.Dtim2g = types.Int64Value(int64(json.DTIMNg))
+	model.Dtim5g = types.Int64Value(int64(json.DTIMNa))
+	model.DtimMode = types.StringValue(json.DTIMMode)
+	model.Enabled = types.BoolValue(json.Enabled)
+	model.EnhancedIot = types.BoolValue(json.EnhancedIot)
+	model.FastRoamingEnabled = types.BoolValue(json.FastRoamingEnabled)
+	model.GroupRekey = types.Int64Value(int64(json.GroupRekey))
+	model.HideSsid = types.BoolValue(json.HideSSID)
+	model.Hotspot2confEnabled = types.BoolValue(json.Hotspot2ConfEnabled)
+	model.IsGuest = types.BoolValue(json.IsGuest)
+	model.IappEnabled = types.BoolValue(json.IappEnabled)
+	model.IappKey = types.StringValue(json.XIappKey)
+	model.L2Isolation = types.BoolValue(json.L2Isolation)
+	model.MacFilterEnabled = types.BoolValue(json.MACFilterEnabled)
+
+	macFilterList, diags := types.ListValueFrom(ctx, types.StringType, json.MACFilterList)
+	if diags.HasError() {
+		return diags
+	}
+	model.MacFilterList = macFilterList
+
+	model.MacFilterPolicy = types.StringValue(json.MACFilterPolicy)
+	model.Minimum2gAdvertisingRates = types.BoolValue(json.MinrateNgAdvertisingRates)
+	model.Minimum2gDataRateEnabled = types.BoolValue(json.MinrateNgEnabled)
+	model.Minimum2gDataRateKbps = types.Int64Value(int64(json.MinrateNgDataRateKbps))
+	model.Minimum5gAdvertisingRates = types.BoolValue(json.MinrateNaAdvertisingRates)
+	model.Minimum5gDataRateEnabled = types.BoolValue(json.MinrateNaEnabled)
+	model.Minimum5gDataRateKbps = types.Int64Value(int64(json.MinrateNaDataRateKbps))
+	model.MinimumDataRateSettingPreference = types.StringValue(json.MinrateSettingPreference)
+	model.MloEnabled = types.BoolValue(json.MloEnabled)
+	model.MulticastEnhanceEnabled = types.BoolValue(json.MulticastEnhanceEnabled)
+	model.Name = types.StringValue(json.Name)
+	model.NetworkId = types.StringValue(json.NetworkID)
+	model.No2ghzOui = types.BoolValue(json.No2GhzOui)
+	model.OptimizeIotWifiConnectivity = types.BoolValue(json.OptimizeIotWifiConnectivity)
+	model.Passphrase = types.StringValue(json.XPassphrase)
+	model.PassphraseAutogenerated = types.BoolValue(json.PassphraseAutogenerated)
+	model.PmfMode = types.StringValue(json.PMFMode)
+
+	privatePresharedKeyList, diags := types.ListValueFrom(ctx, datasource_wlan.PrivatePresharedKeysValue{}.Type(ctx), json.PrivatePresharedKeys)
+	if diags.HasError() {
+		return diags
+	}
+	model.PrivatePresharedKeys = privatePresharedKeyList
+
+	model.PrivatePresharedKeysEnabled = types.BoolValue(json.PrivatePresharedKeysEnabled)
+	model.ProxyArp = types.BoolValue(json.ProxyArp)
+	model.RadiusDasEnabled = types.BoolValue(json.RADIUSDasEnabled)
+	model.RadiusMacAuthEnabled = types.BoolValue(json.RADIUSMACAuthEnabled)
+	model.RadiusMacAclFormat = types.StringValue(json.RADIUSMACaclFormat)
+	model.RadiusProfileId = types.StringValue(json.RADIUSProfileID)
+
+	saeGroupList, diags := types.ListValueFrom(ctx, types.Int64Type, json.SaeGroups)
+	if diags.HasError() {
+		return diags
+	}
+	model.SaeGroups = saeGroupList
+
+	saePskList, diags := types.ListValueFrom(ctx, datasource_wlan.SaePsksValue{}.Type(ctx), json.SaePsk)
+	if diags.HasError() {
+		return diags
+	}
+	model.SaePsks = saePskList
+
+	schedule, diags := types.ListValueFrom(ctx, datasource_wlan.ScheduleValue{}.Type(ctx), json.ScheduleWithDuration)
+	if diags.HasError() {
+		return diags
+	}
+	model.Schedule = schedule
+
+	model.Security = types.StringValue(json.Security)
+	model.SettingPreference = types.StringValue(json.SettingPreference)
+	model.UapsdEnabled = types.BoolValue(json.UapsdEnabled)
+	model.UserGroupId = types.StringValue(json.UserGroupID)
+	model.WlanBand = types.StringValue(json.WLANBand)
+
+	wlanBandList, diags := types.ListValueFrom(ctx, types.StringType, json.WLANBands)
+	if diags.HasError() {
+		return diags
+	}
+	model.WlanBands = wlanBandList
+
+	model.WpaEnc = types.StringValue(json.WPAEnc)
+	model.WpaMode = types.StringValue(json.WPAMode)
+	model.Wpa3Enhanced192 = types.BoolValue(json.WPA3Enhanced192)
+	model.Wpa3FastRoaming = types.BoolValue(json.WPA3FastRoaming)
+	model.Wpa3Support = types.BoolValue(json.WPA3Support)
+	model.Wpa3Transition = types.BoolValue(json.WPA3Transition)
+
+	return nil
+}
