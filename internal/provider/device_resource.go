@@ -26,7 +26,7 @@ func NewDeviceResource() resource.Resource {
 }
 
 type deviceResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *deviceResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -44,7 +44,7 @@ func (r *deviceResource) Configure(ctx context.Context, req resource.ConfigureRe
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(

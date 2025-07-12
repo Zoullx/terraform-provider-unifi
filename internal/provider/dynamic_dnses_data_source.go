@@ -21,7 +21,7 @@ func NewDynamicDnsesDataSource() datasource.DataSource {
 }
 
 type dynamicDnsesDataSource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (d *dynamicDnsesDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -39,7 +39,7 @@ func (d *dynamicDnsesDataSource) Configure(_ context.Context, req datasource.Con
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",

@@ -25,7 +25,7 @@ func NewDynamicDnsResource() resource.Resource {
 }
 
 type dynamicDnsResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *dynamicDnsResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -43,7 +43,7 @@ func (r *dynamicDnsResource) Configure(ctx context.Context, req resource.Configu
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(

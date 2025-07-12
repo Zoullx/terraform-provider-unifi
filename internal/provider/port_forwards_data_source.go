@@ -21,7 +21,7 @@ func NewPortForwardsDataSource() datasource.DataSource {
 }
 
 type portForwardsDataSource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (d *portForwardsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -39,7 +39,7 @@ func (d *portForwardsDataSource) Configure(_ context.Context, req datasource.Con
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",

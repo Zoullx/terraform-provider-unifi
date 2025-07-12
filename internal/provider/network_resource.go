@@ -26,7 +26,7 @@ func NewNetworkResource() resource.Resource {
 }
 
 type networkResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *networkResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -44,7 +44,7 @@ func (r *networkResource) Configure(ctx context.Context, req resource.ConfigureR
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(

@@ -23,7 +23,7 @@ func NewSiteResource() resource.Resource {
 }
 
 type siteResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *siteResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -41,7 +41,7 @@ func (r *siteResource) Configure(ctx context.Context, req resource.ConfigureRequ
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
@@ -71,7 +71,7 @@ func (r *siteResource) Create(ctx context.Context, req resource.CreateRequest, r
 
 	var body unifi.Site
 	parseSiteResourceModel(data, &body)
-	site, err := r.client.CreateSite(ctx, &body)
+	site, err := r.client.CreateSiteByModel(ctx, &body)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Site",
@@ -124,7 +124,7 @@ func (r *siteResource) Update(ctx context.Context, req resource.UpdateRequest, r
 
 	var body unifi.Site
 	parseSiteResourceModel(data, &body)
-	site, err := r.client.UpdateSite(ctx, &body)
+	site, err := r.client.UpdateSiteByModel(ctx, &body)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating Site",
@@ -151,7 +151,7 @@ func (r *siteResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 	}
 
 	// Delete existing Site
-	err := r.client.DeleteSite(ctx, data.Id.ValueString())
+	_, err := r.client.DeleteSite(ctx, data.Id.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error deleting Site",

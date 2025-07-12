@@ -25,7 +25,7 @@ func NewUserGroupResource() resource.Resource {
 }
 
 type userGroupResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *userGroupResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -43,7 +43,7 @@ func (r *userGroupResource) Configure(ctx context.Context, req resource.Configur
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(

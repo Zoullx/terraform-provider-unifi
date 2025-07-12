@@ -25,7 +25,7 @@ func NewAccountResource() resource.Resource {
 }
 
 type accountResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *accountResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -43,7 +43,7 @@ func (r *accountResource) Configure(ctx context.Context, req resource.ConfigureR
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(

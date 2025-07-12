@@ -26,7 +26,7 @@ func NewApGroupResource() resource.Resource {
 }
 
 type apGroupResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *apGroupResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -44,7 +44,7 @@ func (r *apGroupResource) Configure(ctx context.Context, req resource.ConfigureR
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(
@@ -143,7 +143,7 @@ func (r *apGroupResource) Update(ctx context.Context, req resource.UpdateRequest
 
 	var body unifi.APGroup
 	resp.Diagnostics.Append(parseApGroupResourceModel(ctx, data, &body)...)
-	apGroup, err := r.client.UpdateAPGroup(ctx, data.Site.ValueString(), data.Id.ValueString(), &body)
+	apGroup, err := r.client.UpdateAPGroup(ctx, data.Site.ValueString(), &body)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating AP Group",

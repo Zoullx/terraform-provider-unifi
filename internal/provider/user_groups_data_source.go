@@ -21,7 +21,7 @@ func NewUserGroupsDataSource() datasource.DataSource {
 }
 
 type userGroupsDataSource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (d *userGroupsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -39,7 +39,7 @@ func (d *userGroupsDataSource) Configure(_ context.Context, req datasource.Confi
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",

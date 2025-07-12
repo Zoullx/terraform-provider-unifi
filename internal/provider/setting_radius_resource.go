@@ -24,7 +24,7 @@ func NewSettingRadiusResource() resource.Resource {
 }
 
 type settingRadiusResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *settingRadiusResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -42,7 +42,7 @@ func (r *settingRadiusResource) Configure(ctx context.Context, req resource.Conf
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(

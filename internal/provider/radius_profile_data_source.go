@@ -20,7 +20,7 @@ func NewRadiusProfileDataSource() datasource.DataSource {
 }
 
 type radiusProfileDataSource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (d *radiusProfileDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -38,7 +38,7 @@ func (d *radiusProfileDataSource) Configure(_ context.Context, req datasource.Co
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",

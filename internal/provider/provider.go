@@ -125,7 +125,11 @@ func (p *UnifiProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	tflog.Debug(ctx, "Creating Unifi client")
 
 	// Create a new unifi client using the configuration values
-	client, err := unifi.NewClient(ctx, host, apiKey, insecure)
+	client, err := unifi.NewClient(&unifi.ClientConfig{
+		URL:       host,
+		APIKey:    apiKey,
+		VerifySSL: insecure,
+	})
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to create Unifi API Client",

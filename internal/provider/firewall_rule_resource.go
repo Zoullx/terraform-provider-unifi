@@ -26,7 +26,7 @@ func NewFirewallRuleResource() resource.Resource {
 }
 
 type firewallRuleResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *firewallRuleResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -44,7 +44,7 @@ func (r *firewallRuleResource) Configure(ctx context.Context, req resource.Confi
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(

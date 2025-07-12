@@ -25,7 +25,7 @@ func NewPortProfileResource() resource.Resource {
 }
 
 type portProfileResource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (r *portProfileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -43,7 +43,7 @@ func (r *portProfileResource) Configure(ctx context.Context, req resource.Config
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 
 	if !ok {
 		resp.Diagnostics.AddError(

@@ -21,7 +21,7 @@ func NewWlanDataSource() datasource.DataSource {
 }
 
 type wlanDataSource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (d *wlanDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -39,7 +39,7 @@ func (d *wlanDataSource) Configure(_ context.Context, req datasource.ConfigureRe
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",

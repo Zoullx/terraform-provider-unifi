@@ -21,7 +21,7 @@ func NewFirewallRuleDataSource() datasource.DataSource {
 }
 
 type firewallRuleDataSource struct {
-	client *unifi.Client
+	client unifi.Client
 }
 
 func (d *firewallRuleDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -39,7 +39,7 @@ func (d *firewallRuleDataSource) Configure(_ context.Context, req datasource.Con
 		return
 	}
 
-	client, ok := req.ProviderData.(*unifi.Client)
+	client, ok := req.ProviderData.(unifi.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
