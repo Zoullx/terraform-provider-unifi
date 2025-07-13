@@ -82,6 +82,7 @@ func (d *settingUsgDataSource) Read(ctx context.Context, req datasource.ReadRequ
 
 func parseSettingUsgDataSourceJson(ctx context.Context, json unifi.SettingUsg, model *datasource_setting_usg.SettingUsgModel) diag.Diagnostics {
 	model.Id = types.StringValue(json.ID)
+	model.SiteId = types.StringValue(json.SiteID)
 
 	var dhcpRelayServerSlice []types.String
 	for _, dns := range []string{

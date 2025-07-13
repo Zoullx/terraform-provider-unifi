@@ -2866,6 +2866,13 @@
             }
           },
           {
+            "name": "site_id",
+            "string": {
+              "description": "The id of the site the Setting USG is associated with.",
+              "computed_optional_required": "computed"
+            }
+          },
+          {
             "name": "multicast_dns_enabled",
             "bool": {
               "description": "Whether multicast DNS is enabled.",

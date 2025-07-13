@@ -33,6 +33,11 @@ func SettingUsgDataSourceSchema(ctx context.Context) schema.Schema {
 				Description:         "The name of the site the Setting USG is associated with.",
 				MarkdownDescription: "The name of the site the Setting USG is associated with.",
 			},
+			"site_id": schema.StringAttribute{
+				Computed:            true,
+				Description:         "The id of the site the Setting USG is associated with.",
+				MarkdownDescription: "The id of the site the Setting USG is associated with.",
+			},
 		},
 	}
 }
@@ -42,4 +47,5 @@ type SettingUsgModel struct {
 	Id                  types.String `tfsdk:"id"`
 	MulticastDnsEnabled types.Bool   `tfsdk:"multicast_dns_enabled"`
 	Site                types.String `tfsdk:"site"`
+	SiteId              types.String `tfsdk:"site_id"`
 }

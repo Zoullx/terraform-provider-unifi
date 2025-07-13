@@ -174,6 +174,7 @@ func (r *settingUsgResource) Delete(ctx context.Context, req resource.DeleteRequ
 
 func parseSettingUsgResourceJson(ctx context.Context, json unifi.SettingUsg, model *resource_setting_usg.SettingUsgModel) diag.Diagnostics {
 	model.Id = types.StringValue(json.ID)
+	model.SiteId = types.StringValue(json.SiteID)
 
 	var dhcpRelayServerSlice []types.String
 	for _, dns := range []string{
@@ -198,6 +199,7 @@ func parseSettingUsgResourceJson(ctx context.Context, json unifi.SettingUsg, mod
 
 func parseSettingUsgResourceModel(ctx context.Context, model resource_setting_usg.SettingUsgModel, json *unifi.SettingUsg) diag.Diagnostics {
 	json.ID = model.Id.ValueString()
+	json.SiteID = model.SiteId.ValueString()
 
 	var dhcpRelayServerSlice []types.String
 	if !model.DhcpRelayServers.IsUnknown() && !model.DhcpRelayServers.IsNull() {
