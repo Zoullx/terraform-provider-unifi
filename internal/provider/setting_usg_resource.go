@@ -177,14 +177,16 @@ func parseSettingUsgResourceJson(ctx context.Context, json unifi.SettingUsg, mod
 	model.SiteId = types.StringValue(json.SiteID)
 
 	var dhcpRelayServerSlice []types.String
-	for _, dns := range []string{
+	for _, server := range []string{
 		json.DHCPRelayServer1,
 		json.DHCPRelayServer2,
 		json.DHCPRelayServer3,
 		json.DHCPRelayServer4,
 		json.DHCPRelayServer5,
 	} {
-		dhcpRelayServerSlice = append(dhcpRelayServerSlice, types.StringValue(dns))
+		if server != "" {
+			dhcpRelayServerSlice = append(dhcpRelayServerSlice, types.StringValue(server))
+		}
 	}
 	dhcpRelayServerList, diags := types.ListValueFrom(ctx, types.StringType, dhcpRelayServerSlice)
 	if diags.HasError() {

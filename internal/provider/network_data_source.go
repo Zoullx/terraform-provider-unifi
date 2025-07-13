@@ -97,7 +97,9 @@ func parseNetworkDataSourceJson(ctx context.Context, json unifi.Network, model *
 		json.DHCPDDNS3,
 		json.DHCPDDNS4,
 	} {
-		dhcpDnsSlice = append(dhcpDnsSlice, types.StringValue(dns))
+		if dns != "" {
+			dhcpDnsSlice = append(dhcpDnsSlice, types.StringValue(dns))
+		}
 	}
 	dhcpDnsList, diags := types.ListValueFrom(ctx, types.StringType, dhcpDnsSlice)
 	if diags.HasError() {
@@ -128,7 +130,9 @@ func parseNetworkDataSourceJson(ctx context.Context, json unifi.Network, model *
 		json.DHCPDV6DNS3,
 		json.DHCPDV6DNS4,
 	} {
-		dhcpDnsv6Slice = append(dhcpDnsv6Slice, types.StringValue(dns))
+		if dns != "" {
+			dhcpDnsv6Slice = append(dhcpDnsv6Slice, types.StringValue(dns))
+		}
 	}
 	model.DhcpV6Dns, diags = types.ListValueFrom(ctx, types.StringType, dhcpDnsv6Slice)
 	if diags.HasError() {
@@ -204,7 +208,9 @@ func parseNetworkDataSourceJson(ctx context.Context, json unifi.Network, model *
 		json.WANDNS3,
 		json.WANDNS4,
 	} {
-		wanDnsSlice = append(wanDnsSlice, types.StringValue(dns))
+		if dns != "" {
+			wanDnsSlice = append(wanDnsSlice, types.StringValue(dns))
+		}
 	}
 	model.WanDns, diags = types.ListValueFrom(ctx, types.StringType, wanDnsSlice)
 	if diags.HasError() {
