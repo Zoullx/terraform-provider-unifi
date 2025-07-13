@@ -6,9 +6,15 @@ terraform {
   }
 }
 
+variable "UNIFI_API_KEY" {
+  type        = string
+  description = "Unifi API Key"
+  sensitive   = true
+}
+
 provider "unifi" {
   host           = "https://10.0.0.1"
-  api_key        = "KjNe0gwYk1LPh-odK_9fkptG6_S5xaZV"
+  api_key        = var.UNIFI_API_KEY
   allow_insecure = true
 }
 

@@ -18,13 +18,11 @@ provider "unifi" {
   allow_insecure = true
 }
 
-resource "unifi_firewall_group" "test" {
-  name    = "All Local"
-  site    = "default"
-  type    = "address-group"
-  members = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+data "unifi_user_group" "test" {
+  name = "Default"
+  site = "default"
 }
 
-output "firewall_group_test" {
-  value = unifi_firewall_group.test
+output "user_group_test" {
+  value = data.unifi_user_group.test
 }

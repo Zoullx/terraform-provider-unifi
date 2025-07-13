@@ -126,9 +126,10 @@ func (p *UnifiProvider) Configure(ctx context.Context, req provider.ConfigureReq
 
 	// Create a new unifi client using the configuration values
 	client, err := unifi.NewClient(&unifi.ClientConfig{
-		URL:       host,
-		APIKey:    apiKey,
-		VerifySSL: !insecure,
+		URL:            host,
+		APIKey:         apiKey,
+		VerifySSL:      !insecure,
+		ValidationMode: unifi.DisableValidation,
 	})
 	if err != nil {
 		resp.Diagnostics.AddError(

@@ -6,9 +6,15 @@ terraform {
   }
 }
 
+variable "UNIFI_API_KEY" {
+  type        = string
+  description = "Unifi API Key"
+  sensitive   = true
+}
+
 provider "unifi" {
   host           = "https://10.0.0.1"
-  api_key        = "KjNe0gwYk1LPh-odK_9fkptG6_S5xaZV"
+  api_key        = var.UNIFI_API_KEY
   allow_insecure = true
 }
 
@@ -24,7 +30,7 @@ resource "unifi_wlan" "test" {
   user_group_id                        = "5cddfa45a4ccf30ec588017b"
   iapp_enabled                         = true
   wlan_band                            = "both"
-  network_id                           = "683b5321ce23762e571d0ac8"
+  network_id                           = "6872c6d40a9c2e5995e4c068"
   dtim_5g                              = 3
   enabled                              = true
   wlan_bands                           = ["2g", "5g"]
